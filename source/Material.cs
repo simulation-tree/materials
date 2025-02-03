@@ -1,5 +1,4 @@
-﻿using Data;
-using Materials.Components;
+﻿using Materials.Components;
 using Shaders;
 using System;
 using System.Diagnostics;
@@ -17,7 +16,7 @@ namespace Materials
             {
                 if (TryGetComponent(out IsMaterialRequest request))
                 {
-                    return request.request.status == RequestStatus.Loaded;
+                    return request.status == IsMaterialRequest.Status.Loaded;
                 }
 
                 return IsCompliant;
@@ -79,10 +78,10 @@ namespace Materials
         /// <summary>
         /// Creates a request to load a material entity from the given <paramref name="address"/>.
         /// </summary>
-        public Material(World world, Address address, TimeSpan timeout = default)
+        public Material(World world, FixedString address, TimeSpan timeout = default)
         {
             this.world = world;
-            value = world.CreateEntity(new IsMaterialRequest(new(address, RequestStatus.Submitted, timeout)));
+            value = world.CreateEntity(new IsMaterialRequest(address, timeout));
             CreateArray<PushBinding>();
             CreateArray<ComponentBinding>();
             CreateArray<TextureBinding>();
