@@ -48,6 +48,20 @@ jobs:
           repository: game-simulations/shaders
           token: ${{ secrets.PAT }}
           path: shaders
+      
+      - name: Checkout `unmanaged`
+        uses: actions/checkout@v4.1.2
+        with:
+          repository: game-simulations/unmanaged
+          token: ${{ secrets.PAT }}
+          path: unmanaged
+      
+      - name: Checkout `collections`
+        uses: actions/checkout@v4.1.2
+        with:
+          repository: game-simulations/collections
+          token: ${{ secrets.PAT }}
+          path: collections
             
       - name: Setup
         uses: actions/setup-dotnet@v4
