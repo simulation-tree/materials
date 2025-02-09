@@ -152,7 +152,7 @@ namespace Materials
             uint start = 0;
             foreach (PushBinding existingBinding in array)
             {
-                start += existingBinding.componentType.Size;
+                start += existingBinding.componentType.size;
             }
 
             uint length = array.Length;
