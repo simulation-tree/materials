@@ -247,6 +247,9 @@ namespace Materials
             return ref AddTextureBinding(key, texture.value, region, filtering);
         }
 
+        /// <summary>
+        /// Binds the given <paramref name="texture"/> to <paramref name="key"/> with a default region of (0, 0, 1, 1).
+        /// </summary>
         public readonly ref TextureBinding AddTextureBinding(DescriptorResourceKey key, Entity texture, TextureFiltering filtering = TextureFiltering.Linear)
         {
             return ref AddTextureBinding(key, texture.value, new(0, 0, 1, 1), filtering);
