@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using Worlds;
 
 namespace Materials.Components
 {
     [ArrayElement]
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TextureBinding : IEquatable<TextureBinding>
     {
         public DescriptorResourceKey key;
@@ -86,12 +88,12 @@ namespace Materials.Components
 
         public readonly bool Equals(TextureBinding other)
         {
-            return key.Equals(other.key) && entity.Equals(other.entity) && region.Equals(other.region);
+            return key.Equals(other.key) && entity.Equals(other.entity);
         }
 
         public readonly override int GetHashCode()
         {
-            return HashCode.Combine(key, entity, region);
+            return HashCode.Combine(key, entity);
         }
 
         public static bool operator ==(TextureBinding left, TextureBinding right)
