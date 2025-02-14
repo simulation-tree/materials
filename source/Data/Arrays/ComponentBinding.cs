@@ -4,7 +4,6 @@ using Worlds;
 
 namespace Materials.Components
 {
-    [ArrayElement]
     public struct ComponentBinding : IEquatable<ComponentBinding>
     {
         public DescriptorResourceKey key;

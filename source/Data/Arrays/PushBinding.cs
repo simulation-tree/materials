@@ -3,7 +3,6 @@ using Worlds;
 
 namespace Materials.Components
 {
-    [ArrayElement]
     public struct PushBinding
     {
         public uint start;

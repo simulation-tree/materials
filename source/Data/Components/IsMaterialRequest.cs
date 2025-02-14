@@ -1,10 +1,8 @@
 ﻿using System;
 using Unmanaged;
-using Worlds;
 
 namespace Materials.Components
 {
-    [Component]
     public struct IsMaterialRequest
     {
         public FixedString address;

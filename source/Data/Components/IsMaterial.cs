@@ -2,7 +2,6 @@
 
 namespace Materials.Components
 {
-    [Component]
     public readonly struct IsMaterial
     {
         public readonly uint version;

@@ -5,7 +5,6 @@ using Worlds;
 
 namespace Materials.Components
 {
-    [ArrayElement]
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TextureBinding : IEquatable<TextureBinding>
     {
