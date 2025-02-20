@@ -10,6 +10,9 @@ namespace Materials
 {
     public readonly partial struct Material : IEntity
     {
+        public static readonly MaterialFlags DefaultFlags = MaterialFlags.DepthTest | MaterialFlags.DepthWrite;
+        public static readonly CompareOperation DefaultDepthCompareOperation = CompareOperation.Less;
+
         public readonly bool IsLoaded
         {
             get
@@ -20,6 +23,26 @@ namespace Materials
                 }
 
                 return IsCompliant;
+            }
+        }
+
+        public readonly MaterialFlags Flags
+        {
+            get
+            {
+                ThrowIfNotLoaded();
+
+                return GetComponent<IsMaterial>().flags;
+            }
+        }
+
+        public readonly CompareOperation DepthCompareOperation
+        {
+            get
+            {
+                ThrowIfNotLoaded();
+
+                return GetComponent<IsMaterial>().depthCompareOperation;
             }
         }
 
@@ -92,8 +115,25 @@ namespace Materials
         /// </summary>
         public Material(World world, Shader vertexShader, Shader fragmentShader)
         {
+            MaterialFlags flags = DefaultFlags;
+            CompareOperation depthCompareOperation = DefaultDepthCompareOperation;
+
             this.world = world;
-            value = world.CreateEntity(new IsMaterial(0, (rint)1, (rint)2));
+            value = world.CreateEntity(new IsMaterial(0, (rint)1, (rint)2, flags, depthCompareOperation));
+            AddReference(vertexShader);
+            AddReference(fragmentShader);
+            CreateArray<PushBinding>();
+            CreateArray<ComponentBinding>();
+            CreateArray<TextureBinding>();
+        }
+
+        /// <summary>
+        /// Creates a new material initialized with the given shaders.
+        /// </summary>
+        public Material(World world, Shader vertexShader, Shader fragmentShader, MaterialFlags flags, CompareOperation depthCompareOperation)
+        {
+            this.world = world;
+            value = world.CreateEntity(new IsMaterial(0, (rint)1, (rint)2, flags, depthCompareOperation));
             AddReference(vertexShader);
             AddReference(fragmentShader);
             CreateArray<PushBinding>();
