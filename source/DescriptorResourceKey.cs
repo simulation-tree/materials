@@ -62,7 +62,7 @@ namespace Materials
 
         public readonly override int GetHashCode()
         {
-            return HashCode.Combine(value);
+            return value;
         }
 
         /// <summary>
