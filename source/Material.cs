@@ -188,7 +188,8 @@ namespace Materials
         {
             ThrowIfPushBindingIsAlreadyPresent(componentType);
 
-            USpan<PushBinding> array = GetArray<PushBinding>();
+            ArrayElementType pushBindingType = world.Schema.GetArrayElement<PushBinding>();
+            USpan<PushBinding> array = GetArray<PushBinding>(pushBindingType);
             uint start = 0;
             foreach (PushBinding existingBinding in array)
             {
@@ -196,7 +197,7 @@ namespace Materials
             }
 
             uint length = array.Length;
-            array = ResizeArray<PushBinding>(length + 1);
+            array = ResizeArray<PushBinding>(pushBindingType, length + 1);
             array[length] = new(start, componentType, stage);
             return ref array[length];
         }
@@ -212,9 +213,9 @@ namespace Materials
         {
             ThrowIfComponentBindingIsAlreadyPresent(key, stage);
 
-            USpan<ComponentBinding> array = GetArray<ComponentBinding>();
-            uint length = array.Length;
-            array = ResizeArray<ComponentBinding>(length + 1);
+            ArrayElementType componentBindingType = world.Schema.GetArrayElement<ComponentBinding>();
+            uint length = GetArrayLength<ComponentBinding>(componentBindingType);
+            USpan<ComponentBinding> array = ResizeArray<ComponentBinding>(componentBindingType, length + 1);
             array[length] = new(key, entity, componentType, stage);
             return ref array[length];
         }
@@ -270,9 +271,9 @@ namespace Materials
         {
             ThrowIfTextureBindingIsAlreadyPresent(key);
 
-            USpan<TextureBinding> array = GetArray<TextureBinding>();
-            uint length = array.Length;
-            array = ResizeArray<TextureBinding>(length + 1);
+            ArrayElementType textureBindingType = world.Schema.GetArrayElement<TextureBinding>();
+            uint length = GetArrayLength<TextureBinding>(textureBindingType);
+            USpan<TextureBinding> array = ResizeArray<TextureBinding>(textureBindingType, length + 1);
             array[length] = new(0, key, texture, region, filtering);
             return ref array[length];
         }
