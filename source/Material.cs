@@ -1,4 +1,5 @@
-﻿using Materials.Components;
+﻿using Collections.Generic;
+using Materials.Components;
 using Shaders;
 using System;
 using System.Diagnostics;
@@ -74,7 +75,7 @@ namespace Materials
             {
                 ThrowIfNotLoaded();
 
-                return GetArray<ComponentBinding>();
+                return GetArray<ComponentBinding>().AsSpan();
             }
         }
 
@@ -84,7 +85,7 @@ namespace Materials
             {
                 ThrowIfNotLoaded();
 
-                return GetArray<TextureBinding>();
+                return GetArray<TextureBinding>().AsSpan();
             }
         }
 
@@ -94,7 +95,7 @@ namespace Materials
             {
                 ThrowIfNotLoaded();
 
-                return GetArray<PushBinding>();
+                return GetArray<PushBinding>().AsSpan();
             }
         }
 
@@ -151,7 +152,7 @@ namespace Materials
 
         public readonly bool ContainsPushBinding(DataType componentType)
         {
-            USpan<PushBinding> array = GetArray<PushBinding>();
+            USpan<PushBinding> array = GetArray<PushBinding>().AsSpan();
             for (uint i = 0; i < array.Length; i++)
             {
                 PushBinding binding = array[i];
@@ -166,7 +167,7 @@ namespace Materials
 
         public readonly bool ContainsComponentBinding(DescriptorResourceKey key, ShaderType stage)
         {
-            USpan<ComponentBinding> array = GetArray<ComponentBinding>();
+            USpan<ComponentBinding> array = GetArray<ComponentBinding>().AsSpan();
             for (uint i = 0; i < array.Length; i++)
             {
                 ComponentBinding binding = array[i];
@@ -189,7 +190,7 @@ namespace Materials
             ThrowIfPushBindingIsAlreadyPresent(componentType);
 
             ArrayElementType pushBindingType = world.Schema.GetArrayElement<PushBinding>();
-            USpan<PushBinding> array = GetArray<PushBinding>(pushBindingType);
+            Array<PushBinding> array = GetArray<PushBinding>(pushBindingType);
             uint start = 0;
             foreach (PushBinding existingBinding in array)
             {
@@ -197,7 +198,7 @@ namespace Materials
             }
 
             uint length = array.Length;
-            array = ResizeArray<PushBinding>(pushBindingType, length + 1);
+            array.Length++;
             array[length] = new(start, componentType, stage);
             return ref array[length];
         }
@@ -214,8 +215,9 @@ namespace Materials
             ThrowIfComponentBindingIsAlreadyPresent(key, stage);
 
             ArrayElementType componentBindingType = world.Schema.GetArrayElement<ComponentBinding>();
-            uint length = GetArrayLength<ComponentBinding>(componentBindingType);
-            USpan<ComponentBinding> array = ResizeArray<ComponentBinding>(componentBindingType, length + 1);
+            Array<ComponentBinding> array = GetArray<ComponentBinding>(componentBindingType);
+            uint length = array.Length;
+            array.Length++;
             array[length] = new(key, entity, componentType, stage);
             return ref array[length];
         }
@@ -241,7 +243,7 @@ namespace Materials
         {
             ThrowIfComponentBindingIsMissing(key, stage);
 
-            USpan<ComponentBinding> array = GetArray<ComponentBinding>();
+            USpan<ComponentBinding> array = GetArray<ComponentBinding>().AsSpan();
             for (uint i = 0; i < array.Length; i++)
             {
                 ref ComponentBinding existingBinding = ref array[i];
@@ -272,8 +274,9 @@ namespace Materials
             ThrowIfTextureBindingIsAlreadyPresent(key);
 
             ArrayElementType textureBindingType = world.Schema.GetArrayElement<TextureBinding>();
-            uint length = GetArrayLength<TextureBinding>(textureBindingType);
-            USpan<TextureBinding> array = ResizeArray<TextureBinding>(textureBindingType, length + 1);
+            Array<TextureBinding> array = GetArray<TextureBinding>(textureBindingType);
+            uint length = array.Length;
+            array.Length++;
             array[length] = new(0, key, texture, region, filtering);
             return ref array[length];
         }
@@ -300,7 +303,7 @@ namespace Materials
         {
             ThrowIfTextureBindingIsMissing(key);
 
-            USpan<TextureBinding> array = GetArray<TextureBinding>();
+            USpan<TextureBinding> array = GetArray<TextureBinding>().AsSpan();
             for (uint i = 0; i < array.Length; i++)
             {
                 ref TextureBinding existingBinding = ref array[i];
@@ -315,7 +318,7 @@ namespace Materials
 
         public readonly bool TryGetFirstTextureBinding(uint texture, out TextureBinding binding)
         {
-            USpan<TextureBinding> array = GetArray<TextureBinding>();
+            USpan<TextureBinding> array = GetArray<TextureBinding>().AsSpan();
             for (uint i = 0; i < array.Length; i++)
             {
                 TextureBinding existingBinding = array[i];
@@ -335,7 +338,7 @@ namespace Materials
             contains = TryIndexOfTextureBinding(key, out uint index);
             if (contains)
             {
-                USpan<TextureBinding> array = GetArray<TextureBinding>();
+                USpan<TextureBinding> array = GetArray<TextureBinding>().AsSpan();
                 return ref array[index];
             }
             else
@@ -346,7 +349,7 @@ namespace Materials
 
         public readonly bool TryIndexOfTextureBinding(DescriptorResourceKey key, out uint index)
         {
-            USpan<TextureBinding> array = GetArray<TextureBinding>();
+            USpan<TextureBinding> array = GetArray<TextureBinding>().AsSpan();
             for (uint i = 0; i < array.Length; i++)
             {
                 if (array[i].key == key)
@@ -364,7 +367,7 @@ namespace Materials
         {
             ThrowIfTextureBindingIsMissing(key);
 
-            USpan<TextureBinding> array = GetArray<TextureBinding>();
+            USpan<TextureBinding> array = GetArray<TextureBinding>().AsSpan();
             for (uint i = 0; i < array.Length; i++)
             {
                 ref TextureBinding existingBinding = ref array[i];
