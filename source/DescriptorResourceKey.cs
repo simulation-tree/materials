@@ -33,7 +33,7 @@ namespace Materials
         {
             USpan<char> buffer = stackalloc char[32];
             uint length = ToString(buffer);
-            return buffer.Slice(0, length).ToString();
+            return buffer.GetSpan(length).ToString();
         }
 
         public readonly uint ToString(USpan<char> buffer)
@@ -79,7 +79,7 @@ namespace Materials
             {
                 if (text.TryIndexOf(':', out uint colonIndex))
                 {
-                    USpan<char> bindingText = text.Slice(0, colonIndex);
+                    USpan<char> bindingText = text.GetSpan(colonIndex);
                     USpan<char> setText = text.Slice(colonIndex + 1);
                     if (byte.TryParse(bindingText, out byte binding) && byte.TryParse(setText, out byte set))
                     {
@@ -111,7 +111,7 @@ namespace Materials
         public static DescriptorResourceKey Parse(USpan<char> text)
         {
             uint colonIndex = text.IndexOf(':');
-            USpan<char> bindingText = text.Slice(0, colonIndex);
+            USpan<char> bindingText = text.GetSpan(colonIndex);
             USpan<char> setText = text.Slice(colonIndex + 1);
             byte binding = byte.Parse(bindingText);
             byte set = byte.Parse(setText);
