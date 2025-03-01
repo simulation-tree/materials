@@ -1,5 +1,4 @@
-﻿using Collections.Generic;
-using Materials.Components;
+﻿using Materials.Components;
 using Shaders;
 using System;
 using System.Diagnostics;
@@ -190,7 +189,7 @@ namespace Materials
             ThrowIfPushBindingIsAlreadyPresent(componentType);
 
             ArrayElementType pushBindingType = world.Schema.GetArrayType<PushBinding>();
-            Array<PushBinding> array = GetArray<PushBinding>(pushBindingType);
+            Values<PushBinding> array = GetArray<PushBinding>(pushBindingType);
             uint start = 0;
             foreach (PushBinding existingBinding in array)
             {
@@ -215,7 +214,7 @@ namespace Materials
             ThrowIfComponentBindingIsAlreadyPresent(key, stage);
 
             ArrayElementType componentBindingType = world.Schema.GetArrayType<ComponentBinding>();
-            Array<ComponentBinding> array = GetArray<ComponentBinding>(componentBindingType);
+            Values<ComponentBinding> array = GetArray<ComponentBinding>(componentBindingType);
             uint length = array.Length;
             array.Length++;
             array[length] = new(key, entity, componentType, stage);
@@ -274,7 +273,7 @@ namespace Materials
             ThrowIfTextureBindingIsAlreadyPresent(key);
 
             ArrayElementType textureBindingType = world.Schema.GetArrayType<TextureBinding>();
-            Array<TextureBinding> array = GetArray<TextureBinding>(textureBindingType);
+            Values<TextureBinding> array = GetArray<TextureBinding>(textureBindingType);
             uint length = array.Length;
             array.Length++;
             array[length] = new(0, key, texture, region, filtering);
