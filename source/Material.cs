@@ -68,13 +68,13 @@ namespace Materials
             }
         }
 
-        public readonly USpan<ComponentBinding> ComponentBindings
+        public readonly USpan<EntityComponentBinding> ComponentBindings
         {
             get
             {
                 ThrowIfNotLoaded();
 
-                return GetArray<ComponentBinding>().AsSpan();
+                return GetArray<EntityComponentBinding>().AsSpan();
             }
         }
 
@@ -88,13 +88,13 @@ namespace Materials
             }
         }
 
-        public readonly USpan<PushBinding> PushBindings
+        public readonly USpan<InstanceDataBinding> InstanceBindings
         {
             get
             {
                 ThrowIfNotLoaded();
 
-                return GetArray<PushBinding>().AsSpan();
+                return GetArray<InstanceDataBinding>().AsSpan();
             }
         }
 
@@ -105,8 +105,8 @@ namespace Materials
         {
             this.world = world;
             value = world.CreateEntity(new IsMaterialRequest(address, timeout));
-            CreateArray<PushBinding>();
-            CreateArray<ComponentBinding>();
+            CreateArray<InstanceDataBinding>();
+            CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
         }
 
@@ -122,8 +122,8 @@ namespace Materials
             value = world.CreateEntity(new IsMaterial(0, (rint)1, (rint)2, flags, depthCompareOperation));
             AddReference(vertexShader);
             AddReference(fragmentShader);
-            CreateArray<PushBinding>();
-            CreateArray<ComponentBinding>();
+            CreateArray<InstanceDataBinding>();
+            CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
         }
 
@@ -136,25 +136,25 @@ namespace Materials
             value = world.CreateEntity(new IsMaterial(0, (rint)1, (rint)2, flags, depthCompareOperation));
             AddReference(vertexShader);
             AddReference(fragmentShader);
-            CreateArray<PushBinding>();
-            CreateArray<ComponentBinding>();
+            CreateArray<InstanceDataBinding>();
+            CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
         }
 
         readonly void IEntity.Describe(ref Archetype archetype)
         {
             archetype.AddComponentType<IsMaterial>();
-            archetype.AddArrayType<PushBinding>();
-            archetype.AddArrayType<ComponentBinding>();
+            archetype.AddArrayType<InstanceDataBinding>();
+            archetype.AddArrayType<EntityComponentBinding>();
             archetype.AddArrayType<TextureBinding>();
         }
 
-        public readonly bool ContainsPushBinding(DataType componentType)
+        public readonly bool ContainsInstanceBinding(DataType componentType)
         {
-            USpan<PushBinding> array = GetArray<PushBinding>().AsSpan();
+            USpan<InstanceDataBinding> array = GetArray<InstanceDataBinding>().AsSpan();
             for (uint i = 0; i < array.Length; i++)
             {
-                PushBinding binding = array[i];
+                InstanceDataBinding binding = array[i];
                 if (binding.componentType == componentType)
                 {
                     return true;
@@ -166,10 +166,10 @@ namespace Materials
 
         public readonly bool ContainsComponentBinding(DescriptorResourceKey key, ShaderType stage)
         {
-            USpan<ComponentBinding> array = GetArray<ComponentBinding>().AsSpan();
+            USpan<EntityComponentBinding> array = GetArray<EntityComponentBinding>().AsSpan();
             for (uint i = 0; i < array.Length; i++)
             {
-                ComponentBinding binding = array[i];
+                EntityComponentBinding binding = array[i];
                 if (binding.key == key && binding.stage == stage)
                 {
                     return true;
@@ -184,14 +184,14 @@ namespace Materials
             return TryIndexOfTextureBinding(key, out _);
         }
 
-        public readonly ref PushBinding AddPushBinding(DataType componentType, ShaderType stage)
+        public readonly ref InstanceDataBinding AddInstanceBinding(DataType componentType, ShaderType stage)
         {
             ThrowIfPushBindingIsAlreadyPresent(componentType);
 
-            ArrayElementType pushBindingType = world.Schema.GetArrayType<PushBinding>();
-            Values<PushBinding> array = GetArray<PushBinding>(pushBindingType);
+            ArrayElementType pushBindingType = world.Schema.GetArrayType<InstanceDataBinding>();
+            Values<InstanceDataBinding> array = GetArray<InstanceDataBinding>(pushBindingType);
             uint start = 0;
-            foreach (PushBinding existingBinding in array)
+            foreach (InstanceDataBinding existingBinding in array)
             {
                 start += existingBinding.componentType.size;
             }
@@ -202,50 +202,50 @@ namespace Materials
             return ref array[length];
         }
 
-        public readonly ref PushBinding AddPushBinding<T>(ShaderType stage = ShaderType.Vertex) where T : unmanaged
+        public readonly ref InstanceDataBinding AddInstanceBinding<T>(ShaderType stage = ShaderType.Vertex) where T : unmanaged
         {
             Schema schema = world.Schema;
             DataType componentType = schema.GetComponentDataType<T>();
-            return ref AddPushBinding(componentType, stage);
+            return ref AddInstanceBinding(componentType, stage);
         }
 
-        public readonly ref ComponentBinding AddComponentBinding(DescriptorResourceKey key, uint entity, DataType componentType, ShaderType stage)
+        public readonly ref EntityComponentBinding AddComponentBinding(DescriptorResourceKey key, uint entity, DataType componentType, ShaderType stage)
         {
             ThrowIfComponentBindingIsAlreadyPresent(key, stage);
 
-            ArrayElementType componentBindingType = world.Schema.GetArrayType<ComponentBinding>();
-            Values<ComponentBinding> array = GetArray<ComponentBinding>(componentBindingType);
+            ArrayElementType componentBindingType = world.Schema.GetArrayType<EntityComponentBinding>();
+            Values<EntityComponentBinding> array = GetArray<EntityComponentBinding>(componentBindingType);
             uint length = array.Length;
             array.Length++;
             array[length] = new(key, entity, componentType, stage);
             return ref array[length];
         }
 
-        public readonly ref ComponentBinding AddComponentBinding(DescriptorResourceKey key, Entity entity, DataType componentType, ShaderType stage)
+        public readonly ref EntityComponentBinding AddComponentBinding(DescriptorResourceKey key, Entity entity, DataType componentType, ShaderType stage)
         {
             return ref AddComponentBinding(key, entity.value, componentType, stage);
         }
 
-        public readonly ref ComponentBinding AddComponentBinding<T>(DescriptorResourceKey key, uint entity, ShaderType stage = ShaderType.Vertex) where T : unmanaged
+        public readonly ref EntityComponentBinding AddComponentBinding<T>(DescriptorResourceKey key, uint entity, ShaderType stage = ShaderType.Vertex) where T : unmanaged
         {
             Schema schema = world.Schema;
             DataType componentType = schema.GetComponentDataType<T>();
             return ref AddComponentBinding(key, entity, componentType, stage);
         }
 
-        public readonly ref ComponentBinding AddComponentBinding<T>(DescriptorResourceKey key, Entity entity, ShaderType stage = ShaderType.Vertex) where T : unmanaged
+        public readonly ref EntityComponentBinding AddComponentBinding<T>(DescriptorResourceKey key, Entity entity, ShaderType stage = ShaderType.Vertex) where T : unmanaged
         {
             return ref AddComponentBinding<T>(key, entity.value, stage);
         }
 
-        public readonly ref ComponentBinding GetComponentBinding(DescriptorResourceKey key, ShaderType stage)
+        public readonly ref EntityComponentBinding GetComponentBinding(DescriptorResourceKey key, ShaderType stage)
         {
             ThrowIfComponentBindingIsMissing(key, stage);
 
-            USpan<ComponentBinding> array = GetArray<ComponentBinding>().AsSpan();
+            USpan<EntityComponentBinding> array = GetArray<EntityComponentBinding>().AsSpan();
             for (uint i = 0; i < array.Length; i++)
             {
-                ref ComponentBinding existingBinding = ref array[i];
+                ref EntityComponentBinding existingBinding = ref array[i];
                 if (existingBinding.key == key && existingBinding.stage == stage)
                 {
                     return ref existingBinding;
@@ -259,7 +259,7 @@ namespace Materials
         {
             ThrowIfComponentBindingIsMissing(key, stage);
 
-            ref ComponentBinding binding = ref GetComponentBinding(key, stage);
+            ref EntityComponentBinding binding = ref GetComponentBinding(key, stage);
             binding.entity = entity;
         }
 
@@ -391,7 +391,7 @@ namespace Materials
         [Conditional("DEBUG")]
         private readonly void ThrowIfPushBindingIsMissing(DataType componentType)
         {
-            if (!ContainsPushBinding(componentType))
+            if (!ContainsInstanceBinding(componentType))
             {
                 throw new InvalidOperationException($"Push binding `{componentType.ToString(world.Schema)}` is missing on `{value}`");
             }
@@ -400,7 +400,7 @@ namespace Materials
         [Conditional("DEBUG")]
         private readonly void ThrowIfPushBindingIsAlreadyPresent(DataType componentType)
         {
-            if (ContainsPushBinding(componentType))
+            if (ContainsInstanceBinding(componentType))
             {
                 throw new InvalidOperationException($"Push binding `{componentType.ToString(world.Schema)}` already exists on `{value}`");
             }
