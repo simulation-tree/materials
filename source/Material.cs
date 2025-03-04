@@ -98,6 +98,16 @@ namespace Materials
             }
         }
 
+        public readonly int InstanceBindingsHash
+        {
+            get
+            {
+                ThrowIfNotLoaded();
+
+                return GetComponent<IsMaterial>().instanceBindingsHash;
+            }
+        }
+
         /// <summary>
         /// Creates a request to load a material entity from the given <paramref name="address"/>.
         /// </summary>
@@ -119,7 +129,7 @@ namespace Materials
             CompareOperation depthCompareOperation = DefaultDepthCompareOperation;
 
             this.world = world;
-            value = world.CreateEntity(new IsMaterial(0, (rint)1, (rint)2, flags, depthCompareOperation));
+            value = world.CreateEntity(new IsMaterial(0, (rint)1, (rint)2, flags, depthCompareOperation, default));
             AddReference(vertexShader);
             AddReference(fragmentShader);
             CreateArray<InstanceDataBinding>();
@@ -133,7 +143,7 @@ namespace Materials
         public Material(World world, Shader vertexShader, Shader fragmentShader, MaterialFlags flags, CompareOperation depthCompareOperation)
         {
             this.world = world;
-            value = world.CreateEntity(new IsMaterial(0, (rint)1, (rint)2, flags, depthCompareOperation));
+            value = world.CreateEntity(new IsMaterial(0, (rint)1, (rint)2, flags, depthCompareOperation, default));
             AddReference(vertexShader);
             AddReference(fragmentShader);
             CreateArray<InstanceDataBinding>();
@@ -184,29 +194,40 @@ namespace Materials
             return TryIndexOfTextureBinding(key, out _);
         }
 
-        public readonly ref InstanceDataBinding AddInstanceBinding(DataType componentType, ShaderType stage)
+        public readonly void AddInstanceBinding(DataType componentType, ShaderType stage)
         {
             ThrowIfPushBindingIsAlreadyPresent(componentType);
 
+            int hash = default;
             ArrayElementType pushBindingType = world.Schema.GetArrayType<InstanceDataBinding>();
             Values<InstanceDataBinding> array = GetArray<InstanceDataBinding>(pushBindingType);
             uint start = 0;
             foreach (InstanceDataBinding existingBinding in array)
             {
                 start += existingBinding.componentType.size;
+                hash += existingBinding.GetHashCode();
             }
 
             uint length = array.Length;
-            array.Length++;
-            array[length] = new(start, componentType, stage);
-            return ref array[length];
+            array.Length = length + 1;
+            InstanceDataBinding newBinding = new(start, componentType, stage);
+            array[length] = newBinding;
+            hash += newBinding.GetHashCode();
+
+            ref IsMaterial component = ref TryGetComponent<IsMaterial>(out bool contains);
+            if (!contains)
+            {
+                component = ref AddComponent<IsMaterial>();
+            }
+
+            component = component.WithInstanceBindingsHash(hash);
         }
 
-        public readonly ref InstanceDataBinding AddInstanceBinding<T>(ShaderType stage = ShaderType.Vertex) where T : unmanaged
+        public readonly void AddInstanceBinding<T>(ShaderType stage = ShaderType.Vertex) where T : unmanaged
         {
             Schema schema = world.Schema;
             DataType componentType = schema.GetComponentDataType<T>();
-            return ref AddInstanceBinding(componentType, stage);
+            AddInstanceBinding(componentType, stage);
         }
 
         public readonly ref EntityComponentBinding AddComponentBinding(DescriptorResourceKey key, uint entity, DataType componentType, ShaderType stage)
