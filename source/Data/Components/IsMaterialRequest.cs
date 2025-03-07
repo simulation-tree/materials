@@ -5,12 +5,12 @@ namespace Materials.Components
 {
     public struct IsMaterialRequest
     {
-        public FixedString address;
+        public ASCIIText256 address;
         public TimeSpan timeout;
         public TimeSpan duration;
         public Status status;
 
-        public IsMaterialRequest(FixedString address, TimeSpan timeout)
+        public IsMaterialRequest(ASCIIText256 address, TimeSpan timeout)
         {
             this.address = address;
             this.timeout = timeout;

@@ -111,7 +111,7 @@ namespace Materials
         /// <summary>
         /// Creates a request to load a material entity from the given <paramref name="address"/>.
         /// </summary>
-        public Material(World world, FixedString address, TimeSpan timeout = default)
+        public Material(World world, ASCIIText256 address, TimeSpan timeout = default)
         {
             this.world = world;
             value = world.CreateEntity(new IsMaterialRequest(address, timeout));
