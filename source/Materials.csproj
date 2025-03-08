@@ -7,8 +7,8 @@
         <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
         <Title>Materials</Title>
         <Authors>popcron</Authors>
-        <Company>game-simulations</Company>
-        <RepositoryUrl>https://github.com/game-simulations/materials</RepositoryUrl>
+        <Company>simulation-tree</Company>
+        <RepositoryUrl>https://github.com/simulation-tree/materials</RepositoryUrl>
         <IsAotCompatible>True</IsAotCompatible>
         <IsTrimmable>True</IsTrimmable>
         <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
