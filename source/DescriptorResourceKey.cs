@@ -1,5 +1,4 @@
 ﻿using System;
-using Unmanaged;
 
 namespace Materials
 {
@@ -31,14 +30,14 @@ namespace Materials
 
         public unsafe readonly override string ToString()
         {
-            USpan<char> buffer = stackalloc char[32];
-            uint length = ToString(buffer);
-            return buffer.GetSpan(length).ToString();
+            Span<char> buffer = stackalloc char[32];
+            int length = ToString(buffer);
+            return buffer.Slice(0, length).ToString();
         }
 
-        public readonly uint ToString(USpan<char> buffer)
+        public readonly int ToString(Span<char> buffer)
         {
-            uint length = 0;
+            int length = 0;
             length += Binding.ToString(buffer);
             buffer[length++] = ':';
             length += Set.ToString(buffer.Slice(length));
@@ -68,7 +67,7 @@ namespace Materials
         /// <summary>
         /// Attempts to parse and retrieve the given text as a <see cref="DescriptorResourceKey"/>.
         /// </summary>
-        public static bool TryParse(USpan<char> text, out DescriptorResourceKey key)
+        public static bool TryParse(ReadOnlySpan<char> text, out DescriptorResourceKey key)
         {
             if (text.Length == 0)
             {
@@ -77,10 +76,10 @@ namespace Materials
             }
             else
             {
-                if (text.TryIndexOf(':', out uint colonIndex))
+                if (text.TryIndexOf(':', out int colonIndex))
                 {
-                    USpan<char> bindingText = text.GetSpan(colonIndex);
-                    USpan<char> setText = text.Slice(colonIndex + 1);
+                    ReadOnlySpan<char> bindingText = text.Slice(0, colonIndex);
+                    ReadOnlySpan<char> setText = text.Slice(colonIndex + 1);
                     if (byte.TryParse(bindingText, out byte binding) && byte.TryParse(setText, out byte set))
                     {
                         key = new(binding, set);
@@ -108,11 +107,11 @@ namespace Materials
         /// <para>
         /// May throw an <see cref="Exception"/> if the text is not in the correct format.
         /// </para>
-        public static DescriptorResourceKey Parse(USpan<char> text)
+        public static DescriptorResourceKey Parse(ReadOnlySpan<char> text)
         {
-            uint colonIndex = text.IndexOf(':');
-            USpan<char> bindingText = text.GetSpan(colonIndex);
-            USpan<char> setText = text.Slice(colonIndex + 1);
+            int colonIndex = text.IndexOf(':');
+            ReadOnlySpan<char> bindingText = text.Slice(0, colonIndex);
+            ReadOnlySpan<char> setText = text.Slice(colonIndex + 1);
             byte binding = byte.Parse(bindingText);
             byte set = byte.Parse(setText);
             return new(binding, set);
