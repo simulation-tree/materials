@@ -68,7 +68,7 @@ namespace Materials
             }
         }
 
-        public readonly System.Span<EntityComponentBinding> ComponentBindings
+        public readonly ReadOnlySpan<EntityComponentBinding> ComponentBindings
         {
             get
             {
@@ -78,7 +78,7 @@ namespace Materials
             }
         }
 
-        public readonly System.Span<TextureBinding> TextureBindings
+        public readonly ReadOnlySpan<TextureBinding> TextureBindings
         {
             get
             {
@@ -88,7 +88,7 @@ namespace Materials
             }
         }
 
-        public readonly System.Span<InstanceDataBinding> InstanceBindings
+        public readonly ReadOnlySpan<InstanceDataBinding> InstanceBindings
         {
             get
             {
