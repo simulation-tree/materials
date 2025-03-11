@@ -208,10 +208,8 @@ namespace Materials
                 hash += existingBinding.GetHashCode();
             }
 
-            int length = array.Length;
-            array.Length = length + 1;
             InstanceDataBinding newBinding = new(start, componentType, stage);
-            array[length] = newBinding;
+            array.Add(newBinding);
             hash += newBinding.GetHashCode();
 
             ref IsMaterial component = ref TryGetComponent<IsMaterial>(out bool contains);
@@ -236,10 +234,12 @@ namespace Materials
 
             ArrayElementType componentBindingType = world.Schema.GetArrayType<EntityComponentBinding>();
             Values<EntityComponentBinding> array = GetArray<EntityComponentBinding>(componentBindingType);
-            int length = array.Length;
-            array.Length++;
-            array[length] = new(key, entity, componentType, stage);
-            return ref array[length];
+            ref EntityComponentBinding added = ref array.Add();
+            added.key = key;
+            added.entity = entity;
+            added.componentType = componentType;
+            added.stage = stage;
+            return ref added;
         }
 
         public readonly ref EntityComponentBinding AddComponentBinding(DescriptorResourceKey key, Entity entity, DataType componentType, ShaderType stage)
@@ -295,10 +295,9 @@ namespace Materials
 
             ArrayElementType textureBindingType = world.Schema.GetArrayType<TextureBinding>();
             Values<TextureBinding> array = GetArray<TextureBinding>(textureBindingType);
-            int length = array.Length;
-            array.Length++;
-            array[length] = new(0, key, texture, region, filtering);
-            return ref array[length];
+            ref TextureBinding added = ref array.Add();
+            added = new(0, key, texture, region, filtering);
+            return ref added;
         }
 
         public readonly ref TextureBinding AddTextureBinding(DescriptorResourceKey key, uint texture, TextureFiltering filtering = TextureFiltering.Linear)
