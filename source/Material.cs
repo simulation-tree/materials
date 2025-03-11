@@ -199,7 +199,7 @@ namespace Materials
             ThrowIfPushBindingIsAlreadyPresent(componentType);
 
             int hash = default;
-            ArrayElementType pushBindingType = world.Schema.GetArrayType<InstanceDataBinding>();
+            ArrayType pushBindingType = world.Schema.GetArrayType<InstanceDataBinding>();
             Values<InstanceDataBinding> array = GetArray<InstanceDataBinding>(pushBindingType);
             uint start = 0;
             foreach (InstanceDataBinding existingBinding in array)
@@ -232,7 +232,7 @@ namespace Materials
         {
             ThrowIfComponentBindingIsAlreadyPresent(key, stage);
 
-            ArrayElementType componentBindingType = world.Schema.GetArrayType<EntityComponentBinding>();
+            ArrayType componentBindingType = world.Schema.GetArrayType<EntityComponentBinding>();
             Values<EntityComponentBinding> array = GetArray<EntityComponentBinding>(componentBindingType);
             ref EntityComponentBinding added = ref array.Add();
             added.key = key;
@@ -293,7 +293,7 @@ namespace Materials
         {
             ThrowIfTextureBindingIsAlreadyPresent(key);
 
-            ArrayElementType textureBindingType = world.Schema.GetArrayType<TextureBinding>();
+            ArrayType textureBindingType = world.Schema.GetArrayType<TextureBinding>();
             Values<TextureBinding> array = GetArray<TextureBinding>(textureBindingType);
             ref TextureBinding added = ref array.Add();
             added = new(0, key, texture, region, filtering);
