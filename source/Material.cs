@@ -74,7 +74,7 @@ namespace Materials
             {
                 ThrowIfNotLoaded();
 
-                return GetArray<EntityComponentBinding>().AsSpan();
+                return GetArray<EntityComponentBinding>();
             }
         }
 
@@ -84,7 +84,7 @@ namespace Materials
             {
                 ThrowIfNotLoaded();
 
-                return GetArray<TextureBinding>().AsSpan();
+                return GetArray<TextureBinding>();
             }
         }
 
@@ -94,7 +94,7 @@ namespace Materials
             {
                 ThrowIfNotLoaded();
 
-                return GetArray<InstanceDataBinding>().AsSpan();
+                return GetArray<InstanceDataBinding>();
             }
         }
 
@@ -161,7 +161,7 @@ namespace Materials
 
         public readonly bool ContainsInstanceBinding(DataType componentType)
         {
-            Span<InstanceDataBinding> array = GetArray<InstanceDataBinding>().AsSpan();
+            Span<InstanceDataBinding> array = GetArray<InstanceDataBinding>();
             for (int i = 0; i < array.Length; i++)
             {
                 InstanceDataBinding binding = array[i];
@@ -176,7 +176,7 @@ namespace Materials
 
         public readonly bool ContainsComponentBinding(DescriptorResourceKey key, ShaderType stage)
         {
-            Span<EntityComponentBinding> array = GetArray<EntityComponentBinding>().AsSpan();
+            Span<EntityComponentBinding> array = GetArray<EntityComponentBinding>();
             for (int i = 0; i < array.Length; i++)
             {
                 EntityComponentBinding binding = array[i];
@@ -263,7 +263,7 @@ namespace Materials
         {
             ThrowIfComponentBindingIsMissing(key, stage);
 
-            Span<EntityComponentBinding> array = GetArray<EntityComponentBinding>().AsSpan();
+            Span<EntityComponentBinding> array = GetArray<EntityComponentBinding>();
             for (int i = 0; i < array.Length; i++)
             {
                 ref EntityComponentBinding existingBinding = ref array[i];
@@ -322,7 +322,7 @@ namespace Materials
         {
             ThrowIfTextureBindingIsMissing(key);
 
-            Span<TextureBinding> array = GetArray<TextureBinding>().AsSpan();
+            Span<TextureBinding> array = GetArray<TextureBinding>();
             for (int i = 0; i < array.Length; i++)
             {
                 ref TextureBinding existingBinding = ref array[i];
@@ -337,7 +337,7 @@ namespace Materials
 
         public readonly bool TryGetFirstTextureBinding(uint texture, out TextureBinding binding)
         {
-            Span<TextureBinding> array = GetArray<TextureBinding>().AsSpan();
+            Span<TextureBinding> array = GetArray<TextureBinding>();
             for (int i = 0; i < array.Length; i++)
             {
                 TextureBinding existingBinding = array[i];
@@ -357,7 +357,7 @@ namespace Materials
             contains = TryIndexOfTextureBinding(key, out int index);
             if (contains)
             {
-                Span<TextureBinding> array = GetArray<TextureBinding>().AsSpan();
+                Span<TextureBinding> array = GetArray<TextureBinding>();
                 return ref array[index];
             }
             else
@@ -368,7 +368,7 @@ namespace Materials
 
         public readonly bool TryIndexOfTextureBinding(DescriptorResourceKey key, out int index)
         {
-            Span<TextureBinding> array = GetArray<TextureBinding>().AsSpan();
+            Span<TextureBinding> array = GetArray<TextureBinding>();
             for (int i = 0; i < array.Length; i++)
             {
                 if (array[i].key == key)
@@ -386,7 +386,7 @@ namespace Materials
         {
             ThrowIfTextureBindingIsMissing(key);
 
-            Span<TextureBinding> array = GetArray<TextureBinding>().AsSpan();
+            Span<TextureBinding> array = GetArray<TextureBinding>();
             for (int i = 0; i < array.Length; i++)
             {
                 ref TextureBinding existingBinding = ref array[i];
