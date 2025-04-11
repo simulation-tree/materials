@@ -26,23 +26,33 @@ namespace Materials
             }
         }
 
-        public readonly MaterialFlags Flags
+        public readonly ref sbyte RenderOrder
         {
             get
             {
                 ThrowIfNotLoaded();
 
-                return GetComponent<IsMaterial>().flags;
+                return ref GetComponent<IsMaterial>().renderOrder;
             }
         }
 
-        public readonly CompareOperation DepthCompareOperation
+        public readonly DepthSettings DepthSettings
         {
             get
             {
                 ThrowIfNotLoaded();
 
-                return GetComponent<IsMaterial>().depthCompareOperation;
+                return GetComponent<IsMaterial>().depthSettings;
+            }
+        }
+
+        public readonly BlendSettings BlendSettings
+        {
+            get
+            {
+                ThrowIfNotLoaded();
+
+                return GetComponent<IsMaterial>().blendSettings;
             }
         }
 
@@ -98,16 +108,6 @@ namespace Materials
             }
         }
 
-        public readonly int InstanceBindingsHash
-        {
-            get
-            {
-                ThrowIfNotLoaded();
-
-                return GetComponent<IsMaterial>().instanceBindingsHash;
-            }
-        }
-
         /// <summary>
         /// Creates a request to load a material entity from the given <paramref name="address"/>.
         /// </summary>
@@ -129,7 +129,7 @@ namespace Materials
             CompareOperation depthCompareOperation = DefaultDepthCompareOperation;
 
             this.world = world;
-            value = world.CreateEntity(new IsMaterial(0, (rint)1, (rint)2, flags, depthCompareOperation, default));
+            value = world.CreateEntity(new IsMaterial(0, 0, (rint)1, (rint)2, BlendSettings.Opaque, DepthSettings.Default));
             AddReference(vertexShader);
             AddReference(fragmentShader);
             CreateArray<InstanceDataBinding>();
@@ -140,10 +140,10 @@ namespace Materials
         /// <summary>
         /// Creates a new material initialized with the given shaders.
         /// </summary>
-        public Material(World world, Shader vertexShader, Shader fragmentShader, MaterialFlags flags, CompareOperation depthCompareOperation)
+        public Material(World world, Shader vertexShader, Shader fragmentShader, BlendSettings blendSettings, DepthSettings depthSettings)
         {
             this.world = world;
-            value = world.CreateEntity(new IsMaterial(0, (rint)1, (rint)2, flags, depthCompareOperation, default));
+            value = world.CreateEntity(new IsMaterial(0, 0, (rint)1, (rint)2, blendSettings, depthSettings));
             AddReference(vertexShader);
             AddReference(fragmentShader);
             CreateArray<InstanceDataBinding>();
@@ -218,7 +218,7 @@ namespace Materials
                 component = ref AddComponent<IsMaterial>();
             }
 
-            component = component.WithInstanceBindingsHash(hash);
+            //component = component.WithInstanceBindingsHash(hash);
         }
 
         public readonly void AddInstanceBinding<T>(ShaderType stage = ShaderType.Vertex) where T : unmanaged

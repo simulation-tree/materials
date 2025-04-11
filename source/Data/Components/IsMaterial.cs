@@ -3,23 +3,23 @@ using Worlds;
 
 namespace Materials.Components
 {
-    public readonly struct IsMaterial : IEquatable<IsMaterial>
+    public struct IsMaterial : IEquatable<IsMaterial>
     {
-        public readonly uint version;
-        public readonly rint vertexShaderReference;
-        public readonly rint fragmentShaderReference;
-        public readonly MaterialFlags flags;
-        public readonly CompareOperation depthCompareOperation;
-        public readonly int instanceBindingsHash;
+        public uint version;
+        public sbyte renderOrder;
+        public rint vertexShaderReference;
+        public rint fragmentShaderReference;
+        public BlendSettings blendSettings;
+        public DepthSettings depthSettings;
 
-        public IsMaterial(uint version, rint vertexShaderReference, rint fragmentShaderReference, MaterialFlags flags, CompareOperation depthCompareOperation, int instanceDataHash)
+        public IsMaterial(uint version, sbyte renderOrder, rint vertexShaderReference, rint fragmentShaderReference, BlendSettings blendSettings, DepthSettings depthSettings)
         {
             this.version = version;
+            this.renderOrder = renderOrder;
             this.vertexShaderReference = vertexShaderReference;
             this.fragmentShaderReference = fragmentShaderReference;
-            this.flags = flags;
-            this.depthCompareOperation = depthCompareOperation;
-            this.instanceBindingsHash = instanceDataHash;
+            this.blendSettings = blendSettings;
+            this.depthSettings = depthSettings;
         }
 
         public readonly override bool Equals(object? obj)
@@ -29,32 +29,12 @@ namespace Materials.Components
 
         public readonly bool Equals(IsMaterial other)
         {
-            return version == other.version && vertexShaderReference.Equals(other.vertexShaderReference) && fragmentShaderReference.Equals(other.fragmentShaderReference) && flags == other.flags && depthCompareOperation == other.depthCompareOperation && instanceBindingsHash == other.instanceBindingsHash;
+            return version == other.version && renderOrder == other.renderOrder && vertexShaderReference.Equals(other.vertexShaderReference) && fragmentShaderReference.Equals(other.fragmentShaderReference) && blendSettings == other.blendSettings && depthSettings == other.depthSettings;
         }
 
         public readonly override int GetHashCode()
         {
-            return HashCode.Combine(version, vertexShaderReference, fragmentShaderReference, flags, depthCompareOperation, instanceBindingsHash);
-        }
-
-        public readonly IsMaterial WithFlags(MaterialFlags flags)
-        {
-            return new IsMaterial(version + 1, vertexShaderReference, fragmentShaderReference, flags, depthCompareOperation, instanceBindingsHash);
-        }
-
-        public readonly IsMaterial WithDepthCompareOperation(CompareOperation depthCompareOperation)
-        {
-            return new IsMaterial(version + 1, vertexShaderReference, fragmentShaderReference, flags, depthCompareOperation, instanceBindingsHash);
-        }
-
-        public readonly IsMaterial WithShaderReferences(rint vertexShaderReference, rint fragmentShaderReference)
-        {
-            return new IsMaterial(version + 1, vertexShaderReference, fragmentShaderReference, flags, depthCompareOperation, instanceBindingsHash);
-        }
-
-        public readonly IsMaterial WithInstanceBindingsHash(int instanceDataHash)
-        {
-            return new IsMaterial(version + 1, vertexShaderReference, fragmentShaderReference, flags, depthCompareOperation, instanceDataHash);
+            return HashCode.Combine(version, renderOrder, vertexShaderReference, fragmentShaderReference, blendSettings, depthSettings);
         }
 
         public static bool operator ==(IsMaterial left, IsMaterial right)
