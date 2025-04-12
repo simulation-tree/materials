@@ -32,7 +32,7 @@ namespace Materials
             {
                 ThrowIfNotLoaded();
 
-                return ref GetComponent<IsMaterial>().renderOrder;
+                return ref GetComponent<IsMaterial>().order;
             }
         }
 

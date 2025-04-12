@@ -6,7 +6,7 @@ namespace Materials.Components
     public struct IsMaterial : IEquatable<IsMaterial>
     {
         public uint version;
-        public sbyte renderOrder;
+        public sbyte order;
         public rint vertexShaderReference;
         public rint fragmentShaderReference;
         public BlendSettings blendSettings;
@@ -15,7 +15,7 @@ namespace Materials.Components
         public IsMaterial(uint version, sbyte renderOrder, rint vertexShaderReference, rint fragmentShaderReference, BlendSettings blendSettings, DepthSettings depthSettings)
         {
             this.version = version;
-            this.renderOrder = renderOrder;
+            this.order = renderOrder;
             this.vertexShaderReference = vertexShaderReference;
             this.fragmentShaderReference = fragmentShaderReference;
             this.blendSettings = blendSettings;
@@ -29,12 +29,12 @@ namespace Materials.Components
 
         public readonly bool Equals(IsMaterial other)
         {
-            return version == other.version && renderOrder == other.renderOrder && vertexShaderReference.Equals(other.vertexShaderReference) && fragmentShaderReference.Equals(other.fragmentShaderReference) && blendSettings == other.blendSettings && depthSettings == other.depthSettings;
+            return version == other.version && order == other.order && vertexShaderReference.Equals(other.vertexShaderReference) && fragmentShaderReference.Equals(other.fragmentShaderReference) && blendSettings == other.blendSettings && depthSettings == other.depthSettings;
         }
 
         public readonly override int GetHashCode()
         {
-            return HashCode.Combine(version, renderOrder, vertexShaderReference, fragmentShaderReference, blendSettings, depthSettings);
+            return HashCode.Combine(version, order, vertexShaderReference, fragmentShaderReference, blendSettings, depthSettings);
         }
 
         public static bool operator ==(IsMaterial left, IsMaterial right)
