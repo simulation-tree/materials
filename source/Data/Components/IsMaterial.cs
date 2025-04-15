@@ -5,14 +5,14 @@ namespace Materials.Components
 {
     public struct IsMaterial : IEquatable<IsMaterial>
     {
-        public uint version;
+        public ushort version;
         public sbyte order;
         public rint vertexShaderReference;
         public rint fragmentShaderReference;
         public BlendSettings blendSettings;
         public DepthSettings depthSettings;
 
-        public IsMaterial(uint version, sbyte renderOrder, rint vertexShaderReference, rint fragmentShaderReference, BlendSettings blendSettings, DepthSettings depthSettings)
+        public IsMaterial(ushort version, sbyte renderOrder, rint vertexShaderReference, rint fragmentShaderReference, BlendSettings blendSettings, DepthSettings depthSettings)
         {
             this.version = version;
             this.order = renderOrder;
