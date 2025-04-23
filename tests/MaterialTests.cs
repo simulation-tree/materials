@@ -9,8 +9,8 @@ namespace Materials.Tests
     {
         static MaterialTests()
         {
-            MetadataRegistry.Load<MaterialsTypeBank>();
-            MetadataRegistry.Load<ShadersTypeBank>();
+            MetadataRegistry.Load<MaterialsMetadataBank>();
+            MetadataRegistry.Load<ShadersMetadataBank>();
         }
 
         protected override Schema CreateSchema()
