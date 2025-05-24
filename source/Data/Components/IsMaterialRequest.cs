@@ -17,13 +17,6 @@ namespace Materials.Components
             status = Status.Submitted;
         }
 
-        public readonly IsMaterialRequest BecomeLoaded()
-        {
-            IsMaterialRequest request = this;
-            request.status = Status.Loaded;
-            return request;
-        }
-
         public enum Status : byte
         {
             Submitted,
