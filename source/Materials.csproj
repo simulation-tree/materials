@@ -13,7 +13,7 @@
     <IsTrimmable>True</IsTrimmable>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <OutDir>bin/$(TargetFramework)/$(Configuration)</OutDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,11 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="bin/Debug/net9.0/Materials.dll" Pack="true" PackagePath="tools/debug/Materials.dll" Visible="false"/>
-    <Content Include="bin/Debug/net9.0/Materials.xml" Pack="true" PackagePath="tools/debug/Materials.xml" Visible="false" Condition="Exists('bin/Debug/net9.0/Materials.xml')"/>
-    <Content Include="bin/Release/net9.0/Materials.dll" Pack="true" PackagePath="tools/release/Materials.dll" Visible="false"/>
-    <Content Include="bin/Release/net9.0/Materials.xml" Pack="true" PackagePath="tools/release/Materials.xml" Visible="false" Condition="Exists('bin/Release/net9.0/Materials.xml')"/>
-    <Content Include="build/Materials.targets" Pack="true" PackagePath="build/Materials.targets" Visible="false"/>
+    <Content Include="bin/**/*" Pack="true" PackagePath="lib" Visible="false"/>
+    <Content Include="buildTransitive/**/*" Pack="true" PackagePath="buildTransitive"/>
   </ItemGroup>
 
 </Project>
