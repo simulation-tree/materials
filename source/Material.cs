@@ -98,13 +98,13 @@ namespace Materials
             }
         }
 
-        public readonly ReadOnlySpan<InstanceDataBinding> InstanceBindings
+        public readonly ReadOnlySpan<PushConstantBinding> PushConstants
         {
             get
             {
                 ThrowIfNotLoaded();
 
-                return GetArray<InstanceDataBinding>();
+                return GetArray<PushConstantBinding>();
             }
         }
 
@@ -115,7 +115,7 @@ namespace Materials
         {
             this.world = world;
             value = world.CreateEntity(new IsMaterialRequest(address, timeout));
-            CreateArray<InstanceDataBinding>();
+            CreateArray<PushConstantBinding>();
             CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
         }
@@ -132,7 +132,7 @@ namespace Materials
             value = world.CreateEntity(new IsMaterial(0, 0, (rint)1, (rint)2, BlendSettings.Opaque, DepthSettings.Default));
             AddReference(vertexShader);
             AddReference(fragmentShader);
-            CreateArray<InstanceDataBinding>();
+            CreateArray<PushConstantBinding>();
             CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
         }
@@ -146,7 +146,7 @@ namespace Materials
             value = world.CreateEntity(new IsMaterial(0, 0, (rint)1, (rint)2, blendSettings, depthSettings));
             AddReference(vertexShader);
             AddReference(fragmentShader);
-            CreateArray<InstanceDataBinding>();
+            CreateArray<PushConstantBinding>();
             CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
         }
@@ -154,17 +154,20 @@ namespace Materials
         readonly void IEntity.Describe(ref Archetype archetype)
         {
             archetype.AddComponentType<IsMaterial>();
-            archetype.AddArrayType<InstanceDataBinding>();
+            archetype.AddArrayType<PushConstantBinding>();
             archetype.AddArrayType<EntityComponentBinding>();
             archetype.AddArrayType<TextureBinding>();
         }
 
-        public readonly bool ContainsInstanceBinding(DataType componentType)
+        /// <summary>
+        /// Checks if the material contains a push constant that reads <paramref name="componentType"/> data.
+        /// </summary>
+        public readonly bool ContainsPushConstant(DataType componentType)
         {
-            Span<InstanceDataBinding> array = GetArray<InstanceDataBinding>();
+            Span<PushConstantBinding> array = GetArray<PushConstantBinding>();
             for (int i = 0; i < array.Length; i++)
             {
-                InstanceDataBinding binding = array[i];
+                PushConstantBinding binding = array[i];
                 if (binding.componentType == componentType)
                 {
                     return true;
@@ -194,21 +197,21 @@ namespace Materials
             return TryIndexOfTextureBinding(key, out _);
         }
 
-        public readonly void AddInstanceBinding(DataType componentType, ShaderType stage)
+        public readonly void AddPushConstant(DataType componentType, ShaderType stage)
         {
             ThrowIfPushBindingIsAlreadyPresent(componentType);
 
             int hash = default;
-            int pushBindingType = world.Schema.GetArrayType<InstanceDataBinding>();
-            Values<InstanceDataBinding> array = GetArray<InstanceDataBinding>(pushBindingType);
+            int pushBindingType = world.Schema.GetArrayType<PushConstantBinding>();
+            Values<PushConstantBinding> array = GetArray<PushConstantBinding>(pushBindingType);
             uint start = 0;
-            foreach (InstanceDataBinding existingBinding in array)
+            foreach (PushConstantBinding existingBinding in array)
             {
                 start += existingBinding.componentType.size;
                 hash += existingBinding.GetHashCode();
             }
 
-            InstanceDataBinding newBinding = new(start, componentType, stage);
+            PushConstantBinding newBinding = new(start, componentType, stage);
             array.Add(newBinding);
             hash += newBinding.GetHashCode();
 
@@ -217,15 +220,13 @@ namespace Materials
             {
                 component = ref AddComponent<IsMaterial>();
             }
-
-            //component = component.WithInstanceBindingsHash(hash);
         }
 
-        public readonly void AddInstanceBinding<T>(ShaderType stage = ShaderType.Vertex) where T : unmanaged
+        public readonly void AddPushConstant<T>(ShaderType stage = ShaderType.Vertex) where T : unmanaged
         {
             Schema schema = world.Schema;
             DataType componentType = schema.GetComponentDataType<T>();
-            AddInstanceBinding(componentType, stage);
+            AddPushConstant(componentType, stage);
         }
 
         public readonly ref EntityComponentBinding AddComponentBinding(DescriptorResourceKey key, uint entity, DataType componentType, ShaderType stage)
@@ -411,7 +412,7 @@ namespace Materials
         [Conditional("DEBUG")]
         private readonly void ThrowIfPushBindingIsMissing(DataType componentType)
         {
-            if (!ContainsInstanceBinding(componentType))
+            if (!ContainsPushConstant(componentType))
             {
                 throw new InvalidOperationException($"Push binding `{componentType.ToString(world.Schema)}` is missing on `{value}`");
             }
@@ -420,7 +421,7 @@ namespace Materials
         [Conditional("DEBUG")]
         private readonly void ThrowIfPushBindingIsAlreadyPresent(DataType componentType)
         {
-            if (ContainsInstanceBinding(componentType))
+            if (ContainsPushConstant(componentType))
             {
                 throw new InvalidOperationException($"Push binding `{componentType.ToString(world.Schema)}` already exists on `{value}`");
             }

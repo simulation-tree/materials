@@ -7,13 +7,13 @@ namespace Materials.Components
     /// <summary>
     /// Describes how a component is laid out for the rendering entity.
     /// </summary>
-    public struct InstanceDataBinding : IEquatable<InstanceDataBinding>
+    public struct PushConstantBinding : IEquatable<PushConstantBinding>
     {
         public uint start;
         public DataType componentType;
         public ShaderType stage;
 
-        public InstanceDataBinding(uint start, DataType componentType, ShaderType stage)
+        public PushConstantBinding(uint start, DataType componentType, ShaderType stage)
         {
             this.start = start;
             this.componentType = componentType;
@@ -27,10 +27,10 @@ namespace Materials.Components
 
         public readonly override bool Equals(object? obj)
         {
-            return obj is InstanceDataBinding binding && Equals(binding);
+            return obj is PushConstantBinding binding && Equals(binding);
         }
 
-        public readonly bool Equals(InstanceDataBinding other)
+        public readonly bool Equals(PushConstantBinding other)
         {
             return start == other.start && componentType.Equals(other.componentType) && stage == other.stage;
         }
@@ -48,12 +48,12 @@ namespace Materials.Components
             }
         }
 
-        public static bool operator ==(InstanceDataBinding left, InstanceDataBinding right)
+        public static bool operator ==(PushConstantBinding left, PushConstantBinding right)
         {
             return left.Equals(right);
         }
 
-        public static bool operator !=(InstanceDataBinding left, InstanceDataBinding right)
+        public static bool operator !=(PushConstantBinding left, PushConstantBinding right)
         {
             return !(left == right);
         }
