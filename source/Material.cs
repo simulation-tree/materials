@@ -108,6 +108,16 @@ namespace Materials
             }
         }
 
+        public readonly ReadOnlySpan<StorageBufferBinding> StorageBuffers
+        {
+            get
+            {
+                ThrowIfNotLoaded();
+
+                return GetArray<StorageBufferBinding>();
+            }
+        }
+
         /// <summary>
         /// Creates a request to load a material entity from the given <paramref name="address"/>.
         /// </summary>
@@ -118,6 +128,7 @@ namespace Materials
             CreateArray<PushConstantBinding>();
             CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
+            CreateArray<StorageBufferBinding>();
         }
 
         /// <summary>
@@ -135,6 +146,7 @@ namespace Materials
             CreateArray<PushConstantBinding>();
             CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
+            CreateArray<StorageBufferBinding>();
         }
 
         /// <summary>
@@ -149,6 +161,7 @@ namespace Materials
             CreateArray<PushConstantBinding>();
             CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
+            CreateArray<StorageBufferBinding>();
         }
 
         readonly void IEntity.Describe(ref Archetype archetype)
@@ -157,6 +170,7 @@ namespace Materials
             archetype.AddArrayType<PushConstantBinding>();
             archetype.AddArrayType<EntityComponentBinding>();
             archetype.AddArrayType<TextureBinding>();
+            archetype.AddArrayType<StorageBufferBinding>();
         }
 
         /// <summary>
