@@ -118,7 +118,14 @@ namespace Materials
 
         public readonly override int GetHashCode()
         {
-            return HashCode.Combine(flags, compareOperation, minDepth, maxDepth, front, back);
+            int hash = 17;
+            hash = hash * 31 + (int)flags;
+            hash = hash * 31 + (int)compareOperation;
+            hash = hash * 31 + minDepth.GetHashCode();
+            hash = hash * 31 + maxDepth.GetHashCode();
+            hash = hash * 31 + front.GetHashCode();
+            hash = hash * 31 + back.GetHashCode();
+            return hash;
         }
 
         public static bool operator ==(DepthSettings left, DepthSettings right)

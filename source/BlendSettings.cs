@@ -46,7 +46,15 @@ namespace Materials
 
         public readonly override int GetHashCode()
         {
-            return HashCode.Combine(blendEnable, sourceColorBlend, destinationColorBlend, colorBlendOperation, sourceAlphaBlend, destinationAlphaBlend, alphaBlendOperation);
+            int hash = 17;
+            hash = hash * 31 + blendEnable.GetHashCode();
+            hash = hash * 31 + sourceColorBlend.GetHashCode();
+            hash = hash * 31 + destinationColorBlend.GetHashCode();
+            hash = hash * 31 + colorBlendOperation.GetHashCode();
+            hash = hash * 31 + sourceAlphaBlend.GetHashCode();
+            hash = hash * 31 + destinationAlphaBlend.GetHashCode();
+            hash = hash * 31 + alphaBlendOperation.GetHashCode();
+            return hash;
         }
 
         public static bool operator ==(BlendSettings left, BlendSettings right)

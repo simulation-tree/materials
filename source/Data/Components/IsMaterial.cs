@@ -34,7 +34,14 @@ namespace Materials.Components
 
         public readonly override int GetHashCode()
         {
-            return HashCode.Combine(version, renderGroup, vertexShaderReference, fragmentShaderReference, blendSettings, depthSettings);
+            int hash = 17;
+            hash = hash * 31 + version;
+            hash = hash * 31 + renderGroup;
+            hash = hash * 31 + vertexShaderReference.GetHashCode();
+            hash = hash * 31 + fragmentShaderReference.GetHashCode();
+            hash = hash * 31 + blendSettings.GetHashCode();
+            hash = hash * 31 + depthSettings.GetHashCode();
+            return hash;
         }
 
         public static bool operator ==(IsMaterial left, IsMaterial right)

@@ -92,7 +92,10 @@ namespace Materials.Components
 
         public readonly override int GetHashCode()
         {
-            return HashCode.Combine(key, entity);
+            int hash = 17;
+            hash = hash * 31 + key.GetHashCode();
+            hash = hash * 31 + (int)entity;
+            return hash;
         }
 
         public static bool operator ==(TextureBinding left, TextureBinding right)

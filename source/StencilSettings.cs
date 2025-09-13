@@ -43,7 +43,15 @@ namespace Materials
 
         public readonly override int GetHashCode()
         {
-            return HashCode.Combine(failOperation, passOperation, depthFailOperation, compareOperation, compareMask, writeMask, referenceMask);
+            int hash = 17;
+            hash = hash * 31 + failOperation.GetHashCode();
+            hash = hash * 31 + passOperation.GetHashCode();
+            hash = hash * 31 + depthFailOperation.GetHashCode();
+            hash = hash * 31 + compareOperation.GetHashCode();
+            hash = hash * 31 + compareMask.GetHashCode();
+            hash = hash * 31 + writeMask.GetHashCode();
+            hash = hash * 31 + referenceMask.GetHashCode();
+            return hash;
         }
 
         public static bool operator ==(StencilSettings left, StencilSettings right)

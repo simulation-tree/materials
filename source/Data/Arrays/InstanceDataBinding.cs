@@ -37,15 +37,12 @@ namespace Materials.Components
 
         public readonly override int GetHashCode()
         {
-            unchecked
-            {
-                int hash = 17;
-                hash = hash * 31 + (int)start;
-                hash = hash * 31 + componentType.index;
-                hash = hash * 31 + componentType.size;
-                hash = hash * 31 + (int)stage;
-                return hash;
-            }
+            int hash = 17;
+            hash = hash * 31 + (int)start;
+            hash = hash * 31 + componentType.index;
+            hash = hash * 31 + componentType.size;
+            hash = hash * 31 + (int)stage;
+            return hash;
         }
 
         public static bool operator ==(PushConstantBinding left, PushConstantBinding right)

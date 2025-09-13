@@ -34,7 +34,12 @@ namespace Materials.Components
 
         public readonly override int GetHashCode()
         {
-            return HashCode.Combine(componentType, key, stage);
+            int hash = 17;
+            hash = hash * 31 + componentType.GetHashCode();
+            hash = hash * 31 + (int)entity;
+            hash = hash * 31 + key.GetHashCode();
+            hash = hash * 31 + stage.GetHashCode();
+            return hash;
         }
 
         public static EntityComponentBinding Create<T>(DescriptorResourceKey key, uint entity, ShaderType stage, Schema schema) where T : unmanaged
