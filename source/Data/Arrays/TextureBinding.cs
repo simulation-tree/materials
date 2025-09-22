@@ -3,7 +3,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using Worlds;
 
-namespace Materials.Components
+namespace Materials.Arrays
 {
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     public struct TextureBinding : IEquatable<TextureBinding>

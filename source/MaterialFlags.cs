@@ -6,7 +6,6 @@ namespace Materials
     public enum MaterialFlags : byte
     {
         None = 0,
-        DepthTest = 1,
-        DepthWrite = 2
+        Instanced = 1,
     }
 }

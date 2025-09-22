@@ -11,8 +11,9 @@ namespace Materials.Components
         public rint fragmentShaderReference;
         public BlendSettings blendSettings;
         public DepthSettings depthSettings;
+        public MaterialFlags flags;
 
-        public IsMaterial(ushort version, sbyte renderGroup, rint vertexShaderReference, rint fragmentShaderReference, BlendSettings blendSettings, DepthSettings depthSettings)
+        public IsMaterial(ushort version, sbyte renderGroup, rint vertexShaderReference, rint fragmentShaderReference, BlendSettings blendSettings, DepthSettings depthSettings, MaterialFlags flags)
         {
             this.version = version;
             this.renderGroup = renderGroup;
@@ -20,6 +21,7 @@ namespace Materials.Components
             this.fragmentShaderReference = fragmentShaderReference;
             this.blendSettings = blendSettings;
             this.depthSettings = depthSettings;
+            this.flags = flags;
         }
 
         public readonly override bool Equals(object? obj)
@@ -29,7 +31,7 @@ namespace Materials.Components
 
         public readonly bool Equals(IsMaterial other)
         {
-            return version == other.version && renderGroup == other.renderGroup && vertexShaderReference.Equals(other.vertexShaderReference) && fragmentShaderReference.Equals(other.fragmentShaderReference) && blendSettings == other.blendSettings && depthSettings == other.depthSettings;
+            return version == other.version && renderGroup == other.renderGroup && vertexShaderReference.Equals(other.vertexShaderReference) && fragmentShaderReference.Equals(other.fragmentShaderReference) && blendSettings == other.blendSettings && depthSettings == other.depthSettings && flags == other.flags;
         }
 
         public readonly override int GetHashCode()
@@ -41,6 +43,7 @@ namespace Materials.Components
             hash = hash * 31 + fragmentShaderReference.GetHashCode();
             hash = hash * 31 + blendSettings.GetHashCode();
             hash = hash * 31 + depthSettings.GetHashCode();
+            hash = hash * 31 + flags.GetHashCode();
             return hash;
         }
 

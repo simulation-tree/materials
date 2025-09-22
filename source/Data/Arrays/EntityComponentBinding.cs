@@ -2,7 +2,7 @@
 using System;
 using Worlds;
 
-namespace Materials.Components
+namespace Materials.Arrays
 {
     /// <summary>
     /// Describes where data is found for the shader property at the <see cref="DescriptorResourceKey"/>.

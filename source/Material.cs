@@ -1,4 +1,5 @@
-﻿using Materials.Components;
+﻿using Materials.Arrays;
+using Materials.Components;
 using Shaders;
 using System;
 using System.Diagnostics;
@@ -10,9 +11,6 @@ namespace Materials
 {
     public readonly partial struct Material : IEntity
     {
-        public static readonly MaterialFlags DefaultFlags = MaterialFlags.DepthTest | MaterialFlags.DepthWrite;
-        public static readonly CompareOperation DefaultDepthCompareOperation = CompareOperation.Less;
-
         public readonly bool IsLoaded
         {
             get
@@ -36,23 +34,33 @@ namespace Materials
             }
         }
 
-        public readonly DepthSettings DepthSettings
+        public readonly ref DepthSettings DepthSettings
         {
             get
             {
                 ThrowIfNotLoaded();
 
-                return GetComponent<IsMaterial>().depthSettings;
+                return ref GetComponent<IsMaterial>().depthSettings;
             }
         }
 
-        public readonly BlendSettings BlendSettings
+        public readonly ref BlendSettings BlendSettings
         {
             get
             {
                 ThrowIfNotLoaded();
 
-                return GetComponent<IsMaterial>().blendSettings;
+                return ref GetComponent<IsMaterial>().blendSettings;
+            }
+        }
+
+        public readonly ref MaterialFlags Flags
+        {
+            get
+            {
+                ThrowIfNotLoaded();
+
+                return ref GetComponent<IsMaterial>().flags;
             }
         }
 
@@ -118,6 +126,16 @@ namespace Materials
             }
         }
 
+        public readonly ReadOnlySpan<InstanceAttributeBinding> InstanceAttributes
+        {
+            get
+            {
+                ThrowIfNotLoaded();
+
+                return GetArray<InstanceAttributeBinding>();
+            }
+        }
+
         /// <summary>
         /// Creates a request to load a material entity from the given <paramref name="address"/>.
         /// </summary>
@@ -129,39 +147,39 @@ namespace Materials
             CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
             CreateArray<StorageBufferBinding>();
+            CreateArray<InstanceAttributeBinding>();
         }
 
         /// <summary>
         /// Creates a new material initialized with the given shaders.
         /// </summary>
-        public Material(World world, Shader vertexShader, Shader fragmentShader)
+        public Material(World world, Shader vertexShader, Shader fragmentShader, MaterialFlags flags = default)
         {
-            MaterialFlags flags = DefaultFlags;
-            CompareOperation depthCompareOperation = DefaultDepthCompareOperation;
-
             this.world = world;
-            value = world.CreateEntity(new IsMaterial(0, 0, (rint)1, (rint)2, BlendSettings.Opaque, DepthSettings.Default));
+            value = world.CreateEntity(new IsMaterial(0, 0, (rint)1, (rint)2, BlendSettings.Opaque, DepthSettings.Default, flags));
             AddReference(vertexShader);
             AddReference(fragmentShader);
             CreateArray<PushConstantBinding>();
             CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
             CreateArray<StorageBufferBinding>();
+            CreateArray<InstanceAttributeBinding>();
         }
 
         /// <summary>
         /// Creates a new material initialized with the given shaders.
         /// </summary>
-        public Material(World world, Shader vertexShader, Shader fragmentShader, BlendSettings blendSettings, DepthSettings depthSettings)
+        public Material(World world, Shader vertexShader, Shader fragmentShader, BlendSettings blendSettings, DepthSettings depthSettings, MaterialFlags flags = default)
         {
             this.world = world;
-            value = world.CreateEntity(new IsMaterial(0, 0, (rint)1, (rint)2, blendSettings, depthSettings));
+            value = world.CreateEntity(new IsMaterial(0, 0, (rint)1, (rint)2, blendSettings, depthSettings, flags));
             AddReference(vertexShader);
             AddReference(fragmentShader);
             CreateArray<PushConstantBinding>();
             CreateArray<EntityComponentBinding>();
             CreateArray<TextureBinding>();
             CreateArray<StorageBufferBinding>();
+            CreateArray<InstanceAttributeBinding>();
         }
 
         readonly void IEntity.Describe(ref Archetype archetype)
@@ -171,6 +189,7 @@ namespace Materials
             archetype.AddArrayType<EntityComponentBinding>();
             archetype.AddArrayType<TextureBinding>();
             archetype.AddArrayType<StorageBufferBinding>();
+            archetype.AddArrayType<InstanceAttributeBinding>();
         }
 
         /// <summary>
@@ -182,7 +201,7 @@ namespace Materials
             for (int i = 0; i < array.Length; i++)
             {
                 PushConstantBinding binding = array[i];
-                if (binding.componentType == componentType)
+                if (binding.componentType == componentType.index)
                 {
                     return true;
                 }
@@ -216,16 +235,15 @@ namespace Materials
             ThrowIfPushBindingIsAlreadyPresent(componentType);
 
             int hash = default;
-            int pushBindingType = world.Schema.GetArrayType<PushConstantBinding>();
-            Values<PushConstantBinding> array = GetArray<PushConstantBinding>(pushBindingType);
-            uint start = 0;
+            Values<PushConstantBinding> array = GetArray<PushConstantBinding>();
+            int start = 0;
             foreach (PushConstantBinding existingBinding in array)
             {
-                start += existingBinding.componentType.size;
+                start += existingBinding.componentSize;
                 hash += existingBinding.GetHashCode();
             }
 
-            PushConstantBinding newBinding = new(start, componentType, stage);
+            PushConstantBinding newBinding = new(start, componentType.index, componentType.size, stage);
             array.Add(newBinding);
             hash += newBinding.GetHashCode();
 
@@ -412,6 +430,16 @@ namespace Materials
                     existingBinding.SetFiltering(filtering);
                 }
             }
+        }
+
+        /// <summary>
+        /// Adds per-instance attribute data.
+        /// </summary>
+        public readonly void AddInstanceBuffer<T>(DescriptorResourceKey key) where T : unmanaged
+        {
+            Schema schema = world.Schema;
+            DataType componentType = schema.GetComponentDataType<T>();
+            AddArrayElement(new InstanceAttributeBinding(key, componentType));
         }
 
         [Conditional("DEBUG")]

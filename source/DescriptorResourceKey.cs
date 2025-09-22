@@ -28,7 +28,7 @@ namespace Materials
             value = (byte)(set << 4 | binding);
         }
 
-        public unsafe readonly override string ToString()
+        public readonly override string ToString()
         {
             Span<char> buffer = stackalloc char[32];
             int length = ToString(buffer);
@@ -42,6 +42,11 @@ namespace Materials
             buffer[length++] = ':';
             length += Set.ToString(buffer.Slice(length));
             return length;
+        }
+
+        public readonly (byte binding, byte set) Deconstruct()
+        {
+            return ((byte)(value & 0x0F), (byte)(value >> 4));
         }
 
         public readonly override bool Equals(object? obj)

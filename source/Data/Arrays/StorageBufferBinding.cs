@@ -1,6 +1,6 @@
 ﻿using Shaders;
 
-namespace Materials.Components
+namespace Materials.Arrays
 {
     public struct StorageBufferBinding
     {
